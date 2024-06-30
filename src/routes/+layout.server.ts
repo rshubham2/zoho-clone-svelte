@@ -1,17 +1,8 @@
-import type { LayoutServerLoad } from './$types';
-import prisma from '$lib/server/db';
+import type { LayoutServerLoad } from './$types'
 
-export const load: LayoutServerLoad = async ({ cookies }) => {
-  const sessionId = cookies.get('session');
-
-  if (sessionId) {
-    const user = await prisma.user.findUnique({ where: { id: sessionId } });
-    if (user) {
-      return {
-        user: { id: user.id, name: user.name, email: user.email }
-      };
-    }
+// get `locals.user` and pass it to the `page` store
+export const load: LayoutServerLoad = async ({ locals }) => {
+  return {
+    user: locals.user,
   }
-
-  return { user: null };
-};
+}
