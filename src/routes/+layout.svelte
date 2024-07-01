@@ -1,25 +1,47 @@
-<script lang="ts">
-  import '../app.postcss';
-  import { page } from '$app/stores';
+<script>
+	import Header from '$lib/components/Header.svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import { page } from '$app/stores'
+	import { enhance } from '$app/forms'
 </script>
 
+<!-- <svelte:head>
+	<title>My App</title>
+    <link rel="icon" href="favicon.ico" />
+</svelte:head> -->
+
 <nav>
-  <a href="/">Home</a>
+	{#if !$page.data.user}
+		<a href="/login">Login</a>
+		<a href="/register">Register</a>
+ 	{/if}
+
   {#if $page.data.user}
-    <a href="/dashboard">Dashboard</a>
-    <form method="POST" action="/auth/logout">
-      <button type="submit">Logout</button>
+    <a href="/admin">Admin</a>
+
+    <form action="/logout" method="POST" use:enhance>
+      <button type="submit">Log out</button>
     </form>
-  {:else}
-    <a href="/auth/login">Login</a>
-    <a href="/auth/register">Register</a>
   {/if}
 </nav>
 
 <main>
-  <slot />
+	<slot />
 </main>
 
-<footer>
-  <p>&copy; 2024 Zoho Clone</p>
-</footer>
+<!-- <div class="app-container">
+	<Header />
+	<div class="content-wrapper">
+		<Sidebar />
+	</div>
+	<Footer />
+</div> -->
+
+<style>
+
+	main {
+		flex: 1;
+		padding: 1rem;
+	}
+</style>
