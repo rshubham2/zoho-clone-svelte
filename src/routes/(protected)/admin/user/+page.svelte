@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   import { slide } from 'svelte/transition';
@@ -115,4 +115,4 @@
       </table>
     </div>
   {/if}
-</div>
+</div> -->
