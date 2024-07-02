@@ -26,6 +26,14 @@
         <p class="text-red-500 text-sm">Username and password are required.</p>
       {/if}
 
+      {#if form?.notFound}
+        <p class="text-red-500 text-sm">User not found.</p>
+      {/if}
+
+      {#if form?.approval}
+        <p class="text-red-500 text-sm">Your account approval is pending.</p>
+      {/if}
+
       {#if form?.credentials}
         <p class="text-red-500 text-sm">You have entered the wrong credentials.</p>
       {/if}

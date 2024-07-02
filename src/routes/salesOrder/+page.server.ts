@@ -24,7 +24,7 @@ async function getToken(fetch: typeof globalThis.fetch): Promise<string> {
 export const load: PageServerLoad = async ({ fetch, url, locals }) => {
       // redirect user if not logged in
         if (!locals.user) {
-            redirect(302, '/')
+            redirect(302, '/login')
         }
     const token = await getToken(fetch);
     const page = Number(url.searchParams.get('page')) || 1;

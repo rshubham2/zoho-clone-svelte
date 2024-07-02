@@ -12,4 +12,5 @@ export interface SalesOrder {
     order_status: string;
     delivery_method: string | null;
     salesorder_id: string;
+    paid_status: string | null;
 }

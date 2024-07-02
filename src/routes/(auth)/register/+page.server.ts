@@ -23,14 +23,22 @@ const register: Action = async ({ request }) => {
   const data = await request.formData()
   const username = data.get('username')
   const password = data.get('password')
+  const email = data.get('email')
 
   if (
     typeof username !== 'string' ||
     typeof password !== 'string' ||
+    typeof email !== 'string'    ||
     !username ||
     !password
   ) {
     return fail(400, { invalid: true })
+  }
+
+  const existingEmail = await db.user.findUnique({ where: { email } });
+
+  if (existingEmail) {
+    return fail(400, { email: true })
   }
 
   const user = await db.user.findUnique({
@@ -45,12 +53,18 @@ const register: Action = async ({ request }) => {
     data: {
       username,
       passwordHash: await bcrypt.hash(password, 10),
+      email,
       userAuthToken: crypto.randomUUID(),
       role: { connect: { name: Roles.USER } },
+      isApproved: false
     },
   })
 
   redirect(303, '/login')
+
+  return { success: true, message: 'Registration successful. Please wait for admin approval.' }
 }
+
+
 
 export const actions: Actions = { register }

@@ -12,31 +12,39 @@
 </svelte:head> -->
 
 <nav>
-	{#if !$page.data.user}
+	<!-- {#if !$page.data.user}
 		<a href="/login">Login</a>
 		<a href="/register">Register</a>
- 	{/if}
+ 	{/if} -->
 
+<!-- {#if $page.data.user.role === 'ADMIN'}
+  <a href="/admin/user" class="text-blue-600 hover:text-blue-800">User Approvals</a>
+{/if} -->
   {#if $page.data.user}
-    <a href="/admin">Admin</a>
+	<a href="/salesOrder">Sales Order</a>
+	<a href="/admin">Admin</a>
 
     <form action="/logout" method="POST" use:enhance>
       <button type="submit">Log out</button>
     </form>
   {/if}
+
+
 </nav>
+
+
+
 
 <main>
 	<slot />
 </main>
 
-<!-- <div class="app-container">
-	<Header />
-	<div class="content-wrapper">
-		<Sidebar />
-	</div>
-	<Footer />
-</div> -->
+
+
+
+
+
+
 
 <style>
 

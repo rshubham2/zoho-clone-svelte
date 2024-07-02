@@ -31,6 +31,10 @@ const login: Action = async ({ cookies, request }) => {
     return fail(400, { credentials: true })
   }
 
+  if (!user.isApproved) {
+    return fail(400, { approval: true })
+  }
+
   const userPassword = await bcrypt.compare(password, user.passwordHash)
 
   if (!userPassword) {
@@ -58,7 +62,7 @@ const login: Action = async ({ cookies, request }) => {
   })
 
   // redirect the user
-  redirect(302, '/')
+  redirect(302, '/login')
 }
 
 export const actions: Actions = { login }

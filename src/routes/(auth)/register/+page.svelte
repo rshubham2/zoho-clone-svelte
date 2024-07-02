@@ -17,13 +17,29 @@
       </div>
 
       <div>
+        <label for="email" class="block text-sm font-medium text-[#3C6581] mb-1">Email</label>
+        <input id="email" name="email" type="email" required 
+               class="w-full px-3 py-2 border border-[#FCFDFC] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2394C5] transition"/>
+      </div>
+
+      <div>
         <label for="password" class="block text-sm font-medium text-[#3C6581] mb-1">Password</label>
+        <input id="password" name="password" type="password" required 
+               class="w-full px-3 py-2 border border-[#FCFDFC] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2394C5] transition"/>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-[#3C6581] mb-1">Confirm Password</label>
         <input id="password" name="password" type="password" required 
                class="w-full px-3 py-2 border border-[#FCFDFC] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2394C5] transition"/>
       </div>
 
       {#if form?.user}
         <p class="text-red-500 text-sm">Username is already taken.</p>
+      {/if} 
+
+      {#if form?.email}
+        <p class="text-red-500 text-sm">Email already in use.</p>
       {/if} 
 
       <button type="submit" 
