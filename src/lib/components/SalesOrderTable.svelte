@@ -51,6 +51,11 @@
             visibleColumns = [...visibleColumns, column];
         }
     }
+
+    function handleDownload() {
+        // Implement your download logic here
+        console.log("Download button clicked");
+    }
 </script>
 
 <div class="container mx-auto px-4 py-8">
@@ -61,7 +66,10 @@
             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             bind:value={searchTerm}
         />
-        <div class="relative ml-4">
+        <div class="relative ml-4 flex">
+            <button on:click={handleDownload} class="p-2 rounded-full hover:bg-gray-200 mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </button>
             <button on:click={() => isColumnSelectorOpen = !isColumnSelectorOpen} class="p-2 rounded-full hover:bg-gray-200">
                 <Cog size={24} />
             </button>
@@ -84,7 +92,6 @@
             {/if}
         </div>
     </div>
-
     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -251,12 +258,10 @@
                         on:click={() => changePage(currentPage - 1)}
                     >
                         <span class="sr-only">Previous</span>
-                        <!-- Heroicon name: solid/chevron-left -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
                     <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
                         {currentPage}
                     </span>
@@ -266,7 +271,6 @@
                         on:click={() => changePage(currentPage + 1)}
                     >
                         <span class="sr-only">Next</span>
-                        <!-- Heroicon name: solid/chevron-right -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                         </svg>
