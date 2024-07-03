@@ -17,6 +17,7 @@
         'status', 'invoiced_status', 'payment_status', 'shipment_date', 'order_status', 'delivery_method'
     ];
     let isColumnSelectorOpen = false;
+    let isDownloadMenuOpen = false;
 
     $: {
         filteredOrders = orders.filter(order => 
@@ -52,9 +53,14 @@
         }
     }
 
-    function handleDownload() {
+    function toggleDownloadMenu() {
+        isDownloadMenuOpen = !isDownloadMenuOpen;
+    }
+
+    function handleDownload(type: 'csv' | 'pdf') {
         // Implement your download logic here
-        console.log("Download button clicked");
+        console.log(`Download ${type} clicked`);
+        isDownloadMenuOpen = false;
     }
 </script>
 
@@ -67,9 +73,29 @@
             bind:value={searchTerm}
         />
         <div class="relative ml-4 flex">
-            <button on:click={handleDownload} class="p-2 rounded-full hover:bg-gray-200 mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-            </button>
+            <div class="relative">
+                <button on:click={toggleDownloadMenu} class="p-2 rounded-full hover:bg-gray-200 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                </button>
+                {#if isDownloadMenuOpen}
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg z-10">
+                        <div class="py-1">
+                            <button
+                                on:click={() => handleDownload('csv')}
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                                CSV
+                            </button>
+                            <button
+                                on:click={() => handleDownload('pdf')}
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                                PDF
+                            </button>
+                        </div>
+                    </div>
+                {/if}
+            </div>
             <button on:click={() => isColumnSelectorOpen = !isColumnSelectorOpen} class="p-2 rounded-full hover:bg-gray-200">
                 <Cog size={24} />
             </button>
@@ -92,142 +118,66 @@
             {/if}
         </div>
     </div>
+
     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-blue-200">
+            <thead class="bg-blue-500">
                 <tr>
-                    {#if visibleColumns.includes('date')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Date</th>
-                    {/if}
-                    {#if visibleColumns.includes('salesorder_number')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Sales Order#</th>
-                    {/if}
-                    {#if visibleColumns.includes('customer_name')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Customer Name</th>
-                    {/if}
-                    {#if visibleColumns.includes('reference_number')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Reference#</th>
-                    {/if}
-                    {#if visibleColumns.includes('total')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Amount</th>
-                    {/if}
-                    {#if visibleColumns.includes('status')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
-                    {/if}
-                    {#if visibleColumns.includes('invoiced_status')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Invoiced</th>
-                    {/if}
-                    {#if visibleColumns.includes('payment_status')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Payment</th>
-                    {/if}
-                    {#if visibleColumns.includes('shipment_date')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Expected Shipment Date</th>
-                    {/if}
-                    {#if visibleColumns.includes('order_status')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Order Status</th>
-                    {/if}
-                    {#if visibleColumns.includes('delivery_method')}
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Delivery Method</th>
-                    {/if}
+                    {#each visibleColumns as column}
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider whitespace-nowrap">{column.replace('_', ' ')}</th>
+                    {/each}
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                {#each filteredOrders as order (order.salesorder_id)}
+            <tbody class="bg-white divide-y divide-blue-100">
+                {#each filteredOrders as order, index (order.salesorder_id)}
                     <tr 
-                        class="hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                        class="hover:bg-blue-50 cursor-pointer transition-colors duration-200 {index % 2 === 0 ? 'bg-blue-50' : 'bg-white'}"
                         on:click={() => handleRowClick(order)}
                         transition:fade
                     >
-                        {#if visibleColumns.includes('date')}
-                            <td class="px-6 py-4 whitespace-nowrap">{new Date(order.date).toLocaleDateString()}</td>
-                        {/if}
-                        {#if visibleColumns.includes('salesorder_number')}
-                            <td class="px-6 py-4 whitespace-nowrap">{order.salesorder_number}</td>
-                        {/if}
-                        {#if visibleColumns.includes('customer_name')}
-                            <td class="px-6 py-4 whitespace-nowrap">{order.customer_name}</td>
-                        {/if}
-                        {#if visibleColumns.includes('reference_number')}
-                            <td class="px-6 py-4 whitespace-nowrap">{order.reference_number}</td>
-                        {/if}
-                        {#if visibleColumns.includes('total')}
-                            <td class="px-6 py-4 whitespace-nowrap">{formatCurrency(order.total)}</td>
-                        {/if}
-                        {#if visibleColumns.includes('status')}
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {order.order_status === 'pending_approval' ? 'bg-red-100 text-red-800' : 
-                                    order.order_status === 'open' ? 'bg-green-100 text-green-800' : 
-                                    order.order_status === 'closed' ? 'bg-gray-100 text-gray-800' : 
-                                    'bg-yellow-100 text-yellow-800'}">
-                                    {order.order_status}
-                                </span>
-                            </td>
-                        {/if}
-                        {#if visibleColumns.includes('invoiced_status')}
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="relative inline-block group">
-                                    {#if order.invoiced_status === 'partially_invoiced'}
-                                        <AlertCircle size={24} class="text-yellow-500"  />
-                                    {:else if order.invoiced_status === 'invoiced'}
-                                        <CheckCircle size={24} class="text-green-500" />
-                                    {:else}
-                                        <XCircle size={24} class="text-gray-500" />
-                                    {/if}
-                                    <div class="absolute z-10 w-auto p-2 m-2 min-w-max rounded-md shadow-md
-                                        text-white bg-gray-900 text-xs font-bold 
-                                        transition-opacity duration-300 
-                                        opacity-0 group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2">
-                                        {order.invoiced_status}
-                                        <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                        {#each visibleColumns as column}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                {#if column === 'date' || column === 'shipment_date'}
+                                    {order[column] ? new Date(order[column]).toLocaleDateString() : 'N/A'}
+                                {:else if column === 'total'}
+                                    {formatCurrency(order[column])}
+                                {:else if column === 'status' || column === 'order_status'}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {order[column] === 'pending_approval' ? 'bg-red-100 text-red-800' : 
+                                        order[column] === 'open' ? 'bg-green-100 text-green-800' : 
+                                        order[column] === 'closed' ? 'bg-gray-100 text-gray-800' : 
+                                        'bg-yellow-100 text-yellow-800'}">
+                                        {order[column]}
+                                    </span>
+                                {:else if column === 'invoiced_status' || column === 'payment_status'}
+                                    <div class="relative inline-block group">
+                                        {#if order[column] === 'partially_invoiced' || order[column] === 'partially_paid'}
+                                            <AlertCircle size={24} class="text-yellow-500" />
+                                        {:else if order[column] === 'invoiced' || order[column] === 'paid'}
+                                            <CheckCircle size={24} class="text-green-500" />
+                                        {:else}
+                                            <XCircle size={24} class="text-gray-500" />
+                                        {/if}
+                                        <div class="absolute z-10 w-auto p-2 m-2 min-w-max rounded-md shadow-md
+                                            text-white bg-gray-900 text-xs font-bold 
+                                            transition-opacity duration-300 
+                                            opacity-0 group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2">
+                                            {order[column]}
+                                            <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                                        </div>
                                     </div>
-                                </div>
+                                {:else}
+                                    {order[column]}
+                                {/if}
                             </td>
-                        {/if}
-                        {#if visibleColumns.includes('payment_status')}
-                            <td class="px-6 py-4 whitespace-nowrap">                                
-                                <div class="relative inline-block group">
-                                    {#if order.paid_status === 'partially_paid'}
-                                        <AlertCircle size={24} class="text-yellow-500"  />
-                                    {:else if order.paid_status === 'paid'}
-                                        <CheckCircle size={24} class="text-green-500" />
-                                    {:else}
-                                        <XCircle size={24} class="text-gray-500" />
-                                    {/if}
-                                    <div class="absolute z-10 w-auto p-2 m-2 min-w-max rounded-md shadow-md
-                                        text-white bg-gray-900 text-xs font-bold 
-                                        transition-opacity duration-300 
-                                        opacity-0 group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2">
-                                        {order.paid_status}
-                                        <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
-                                    </div>
-                                </div>
-                            </td>
-                        {/if}
-                        {#if visibleColumns.includes('shipment_date')}
-                            <td class="px-6 py-4 whitespace-nowrap">{order.shipment_date ? new Date(order.shipment_date).toLocaleDateString() : 'N/A'}</td>
-                        {/if}
-                        {#if visibleColumns.includes('order_status')}
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {order.order_status === 'pending_approval' ? 'bg-red-100 text-red-800' : 
-                                    order.order_status === 'open' ? 'bg-green-100 text-green-800' : 
-                                    order.order_status === 'closed' ? 'bg-gray-100 text-gray-800' : 
-                                    'bg-yellow-100 text-yellow-800'}">
-                                    {order.order_status}
-                                </span>
-                            </td>
-                        {/if}
-                        {#if visibleColumns.includes('delivery_method')}
-                            <td class="px-6 py-4 whitespace-nowrap">{order.delivery_method || 'N/A'}</td>
-                        {/if}
+                        {/each}
                     </tr>
                 {/each}
             </tbody>
         </table>
     </div>
 
-    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-blue-200 sm:px-6 mt-4 rounded-lg shadow">
         <div class="flex-1 flex justify-between sm:hidden">
             <button 
                 class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -280,3 +230,27 @@
         </div>
     </div>
 </div>
+
+<style>
+.bg-blue-50 {
+    background-color: #eff6ff;
+}
+.bg-blue-100 {
+    background-color: #dbeafe;
+}
+.bg-blue-200 {
+    background-color: #bfdbfe;
+}
+.bg-blue-500 {
+    background-color: #3b82f6;
+}
+.hover\:bg-blue-50:hover {
+    background-color: #eff6ff;
+}
+.divide-blue-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #dbeafe;
+}
+.divide-blue-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #bfdbfe;
+}
+</style>
