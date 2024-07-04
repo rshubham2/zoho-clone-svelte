@@ -4,6 +4,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
+	import Dashboard from '$lib/components/Dashboard.svelte';
 </script>
 
 <!-- <svelte:head>
@@ -18,7 +19,8 @@
  	{/if}
 
   {#if $page.data.user}
-    <a href="/admin">Admin</a>
+    <a href="/admin">Admin</a><br>
+	<a href="/dashboard">Dashboard</a>
 
     <form action="/logout" method="POST" use:enhance>
       <button type="submit">Log out</button>
